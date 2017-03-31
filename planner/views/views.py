@@ -14,10 +14,20 @@ def pattern_validate(nbmax):
 
 class SimpleRuleSerializer(serializers.HyperlinkedModelSerializer):
 
-    byweekday = serializers.CharField()
+    byweekday = serializers.CharField(allow_blank=True)
+    bymonth = serializers.CharField(allow_blank=True)
 
     def validate_byweekday(self,value):
-        validation = pattern_validate(7)
+        days = value.split(',')
+        for day in days:
+            if day not in ['MO','TU','WE','TH','FR','SA','SU']:
+                raise serializers.ValidationError("Day not in \
+                'MO','TU','WE','TH','FR','SA','SU'")
+        return value
+
+
+    def validate_month(self,value):
+        validation = pattern_validate(12)
         validation(value)
         return value
 
