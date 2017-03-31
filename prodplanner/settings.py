@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'ordered_model',
     'modeltranslation',
     'polymorphic',
-    'planner'
+    'planner',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -85,6 +86,9 @@ DATABASES = {
     }
 }
 
+REST_FRAMEWORK = {
+    'EXCEPTION_HANDLER' : 'planner.utils.custom_exception_handler'
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators

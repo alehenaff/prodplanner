@@ -76,8 +76,8 @@ class SimpleRule(BaseRule):
         try:
             r = rr.rrulestr(self.content,dtstart=datetime.datetime.now())
             return itertools.islice(r,10) # 10 first items
-        except ValueError:
-            return _("Unable to evaluate {0:s} {1:s}").format(self.content, ValueError)
+        except ValueError as e:
+            return _("Unable to evaluate {0:s} ; Error : {1:s} ").format(self.content, str(e))
 
 class RuleSet(BaseRule):
     name = models.CharField(max_length=50)
