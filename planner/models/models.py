@@ -4,6 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from ordered_model.models import OrderedModel
 import datetime
 from dateutil import rrule as rr
+import itertools
 
 weekdays = (
     ('MO', _('Monday')),
@@ -74,14 +75,7 @@ class SimpleRule(BaseRule):
     def next10(self):
         try:
             r = rr.rrulestr(self.content,dtstart=datetime.datetime.now())
-            result = []
-            i = 0
-            for ech in r:
-                result.append(ech)
-                i = i + 1
-                if i == 10:
-                    break;
-            return result
+            return itertools.islice(r,10) # 10 first items
         except ValueError:
             return _("Unable to evaluate {0:s} {1:s}").format(self.content, ValueError)
 
