@@ -1,4 +1,7 @@
 Django==1.10.6
+django-modeltranslation==0.12
+django-ordered-model==1.3.0
+django-polymorphic==1.1
 djangorestframework==3.6.2
 python-dateutil==2.6.0
 six==1.10.0
