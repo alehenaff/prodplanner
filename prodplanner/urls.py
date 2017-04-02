@@ -15,12 +15,12 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from planner.views import views
+from planner.viewsets import viewsets
 
 from rest_framework import routers
 
 router = routers.DefaultRouter()
-router.register(r'planner',views.SimpleRuleViewSet)
+router.register(r'planner',viewsets.SimpleRuleViewSet)
 
 
 
