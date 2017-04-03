@@ -114,6 +114,14 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
+gettext = lambda s: s
+LANGUAGES = (
+  ('en' , gettext('English')),
+  ('fr', gettext('French'))
+)
+MODELTRANSLATION_DEFAULT_LANGUAGE = 'en'
+MODELTRANSLATION_LANGUAGES = ('fr', 'en')
+
 TIME_ZONE = 'UTC'
 
 USE_I18N = True

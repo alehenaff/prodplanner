@@ -85,6 +85,6 @@ class SimpleRuleSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = SimpleRule
         fields = (
-        'content', 'name', 'url', 'freq', 'wkst', 'byweekday', 'bymonth',
+        'content', 'name_fr', 'name_en','url', 'freq', 'wkst', 'byweekday', 'bymonth',
         'bysetpos', 'bymonthday', 'byyearday', 'byweekno', 'byhour', 'byminute',
         'bysecond', 'byeaster', 'next10')
