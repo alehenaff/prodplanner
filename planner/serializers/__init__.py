@@ -1,1 +1,1 @@
-from .serializers import SimpleRuleSerializer
+from .serializers import SimpleRuleSerializer, RuleElementSerializer

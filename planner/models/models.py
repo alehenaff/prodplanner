@@ -37,6 +37,9 @@ class BaseRule(PolymorphicModel):
 class DateRule(BaseRule):
     date = models.DateField()
 
+    def __str__(self):
+        return _("Date")+" : "+str(self.date)
+
 class SimpleRule(BaseRule):
     name = models.CharField(max_length=50)
     wkst = models.CharField(max_length=2, choices=weekdays, default='MO')
@@ -79,8 +82,14 @@ class SimpleRule(BaseRule):
         except ValueError as e:
             return _("Unable to evaluate {0:s} ; Error : {1:s} ").format(self.content, str(e))
 
+    def __str__(self):
+        return _('Base rule') + " : " + self.name
+
 class RuleSet(BaseRule):
     name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return _('Rule Set')+ " : " + self.name
 
 class RuleElement(models.Model):
     direction = models.CharField(max_length=15, choices=direction_choices)

@@ -20,8 +20,8 @@ from planner.viewsets import viewsets
 from rest_framework import routers
 
 router = routers.DefaultRouter()
-router.register(r'planner',viewsets.SimpleRuleViewSet)
-
+router.register(r'planner/simplerules',viewsets.SimpleRuleViewSet)
+router.register(r'planner/ruleelements',viewsets.RuleElementViewSet)
 
 
 urlpatterns = [

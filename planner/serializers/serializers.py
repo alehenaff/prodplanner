@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from planner.models.models import SimpleRule
+from planner.models.models import SimpleRule, RuleElement
 import re
 
 def pattern_validate(nbmax):
@@ -88,3 +88,8 @@ class SimpleRuleSerializer(serializers.HyperlinkedModelSerializer):
         'content', 'name_fr', 'name_en','url', 'freq', 'wkst', 'byweekday', 'bymonth',
         'bysetpos', 'bymonthday', 'byyearday', 'byweekno', 'byhour', 'byminute',
         'bysecond', 'byeaster', 'next10')
+
+class RuleElementSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RuleElement
+        fields = ('direction','baserule')
