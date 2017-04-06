@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from planner.models.models import SimpleRule, RuleElement
+from planner.models.models import SimpleRule, RuleElement, RuleSetElement, \
+   RuleSet
 import re
 
 def pattern_validate(nbmax):
@@ -93,3 +94,13 @@ class RuleElementSerializer(serializers.ModelSerializer):
     class Meta:
         model = RuleElement
         fields = ('direction','baserule')
+
+class RuleSetElementSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RuleSetElement
+        fields = ('ruleset', 'rule', 'order')
+
+class RuleSetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RuleSet
+        fields = ('name',)

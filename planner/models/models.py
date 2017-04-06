@@ -95,7 +95,13 @@ class RuleElement(models.Model):
     direction = models.CharField(max_length=15, choices=direction_choices)
     baserule = models.ForeignKey(BaseRule)
 
-class RuleSetElements(OrderedModel):
+    class Meta:
+        unique_together = (('direction','baserule'),)
+
+    def __str__(self):
+        return self.direction + "-" + self.baserule.__str__()
+
+class RuleSetElement(OrderedModel):
     ruleset = models.ForeignKey(RuleSet)
     rule = models.ForeignKey(RuleElement)
     order_with_respect_to = 'rule'
