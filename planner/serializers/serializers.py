@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from planner.models.models import SimpleRule, RuleElement, RuleSetElement, \
-   RuleSet
+   RuleSet, BaseRule, DateTimeRule
 import re
 
 def pattern_validate(nbmax):
@@ -86,21 +86,39 @@ class SimpleRuleSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = SimpleRule
         fields = (
-        'content', 'name_fr', 'name_en','url', 'freq', 'wkst', 'byweekday', 'bymonth',
+        'url', 'content', 'name_fr', 'name_en', 'freq', 'wkst', 'byweekday', 'bymonth',
         'bysetpos', 'bymonthday', 'byyearday', 'byweekno', 'byhour', 'byminute',
         'bysecond', 'byeaster', 'next10')
 
-class RuleElementSerializer(serializers.ModelSerializer):
+class RuleElementSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = RuleElement
-        fields = ('direction','baserule')
+        fields = ('url', 'direction', 'baserule',)
 
 class RuleSetElementSerializer(serializers.ModelSerializer):
     class Meta:
         model = RuleSetElement
-        fields = ('ruleset', 'rule', 'order')
+        fields = ('url', 'ruleset', 'rule', 'order')
 
-class RuleSetSerializer(serializers.ModelSerializer):
+class RuleSetSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = RuleSet
-        fields = ('name',)
+        fields = ('url', 'name', 'elements',)
+
+
+class BaseRuleSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = BaseRule
+        fields = ('id',)
+
+    def to_representation(self, obj):
+        if isinstance(obj, SimpleRule):
+            return SimpleRuleSerializer(obj, context=self.context).to_representation(obj)
+        elif isinstance(obj, DateTimeRule):
+            return DateTimeRuleSerializer(obj, context=self.context).to_representation(obj)
+        return super(BaseRuleSerializer, self).to_representation(obj)
+
+class DateTimeRuleSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = DateTimeRule
+        fields=('url','datetime',)

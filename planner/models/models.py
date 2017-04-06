@@ -34,11 +34,11 @@ direction_choices = (
 class BaseRule(PolymorphicModel):
     pass
 
-class DateRule(BaseRule):
-    date = models.DateField()
+class DateTimeRule(BaseRule):
+    datetime = models.DateTimeField()
 
     def __str__(self):
-        return _("Date")+" : "+str(self.date)
+        return _("DateTime")+" : "+str(self.datetime)
 
 class SimpleRule(BaseRule):
     name = models.CharField(max_length=50)
@@ -85,12 +85,6 @@ class SimpleRule(BaseRule):
     def __str__(self):
         return _('Base rule') + " : " + self.name
 
-class RuleSet(BaseRule):
-    name = models.CharField(max_length=50)
-
-    def __str__(self):
-        return _('Rule Set')+ " : " + self.name
-
 class RuleElement(models.Model):
     direction = models.CharField(max_length=15, choices=direction_choices)
     baserule = models.ForeignKey(BaseRule)
@@ -100,6 +94,14 @@ class RuleElement(models.Model):
 
     def __str__(self):
         return self.direction + "-" + self.baserule.__str__()
+
+class RuleSet(BaseRule):
+    name = models.CharField(max_length=50)
+    elements = models.ManyToManyField(RuleElement,through='RuleSetElement')
+
+    def __str__(self):
+        return _('Rule Set')+ " : " + self.name
+
 
 class RuleSetElement(OrderedModel):
     ruleset = models.ForeignKey(RuleSet)
