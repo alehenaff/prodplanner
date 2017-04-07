@@ -1,11 +1,12 @@
 from rest_framework import viewsets
-from planner.serializers import SimpleRuleSerializer, RuleElementSerializer, \
+from planner.serializers import SimpleRuleSerializer, \
     RuleSetElementSerializer, RuleSetSerializer, BaseRuleSerializer, \
     DateTimeRuleSerializer
-from planner.models.models import SimpleRule, RuleElement, \
+from planner.models.models import SimpleRule,  \
     RuleSetElement, RuleSet, BaseRule, DateTimeRule
 import re
-
+# from django.http import JsonResponse
+# from rest_framework.decorators import detail_route
 
 class BaseRuleViewSet(viewsets.ModelViewSet):
     queryset = BaseRule.objects.all()
@@ -15,9 +16,6 @@ class SimpleRuleViewSet(viewsets.ModelViewSet):
      queryset = SimpleRule.objects.all()
      serializer_class = SimpleRuleSerializer
 
-class RuleElementViewSet(viewsets.ModelViewSet):
-    queryset = RuleElement.objects.all()
-    serializer_class = RuleElementSerializer
 
 class RuleSetElementViewSet(viewsets.ModelViewSet):
     queryset = RuleSetElement.objects.all()

@@ -21,7 +21,6 @@ from rest_framework import routers
 
 router = routers.DefaultRouter()
 router.register(r'planner/simplerules',viewsets.SimpleRuleViewSet)
-router.register(r'planner/ruleelements',viewsets.RuleElementViewSet)
 router.register(r'planner/rulesetelements',viewsets.RuleSetElementViewSet)
 router.register(r'planner/rulesets',viewsets.RuleSetViewSet)
 router.register(r'planner/baserules',viewsets.BaseRuleViewSet)

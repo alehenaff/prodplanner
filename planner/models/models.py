@@ -82,34 +82,31 @@ class SimpleRule(BaseRule):
         except ValueError as e:
             return _("Unable to evaluate {0:s} ; Error : {1:s} ").format(self.content, str(e))
 
+#    def between(self, start, end):
+#        try:
+#            return rr.rrulestr(self.content).between(start, end, inc=True)
+#        except ValueError as e:
+#            return _("Unable to evaluate {0:s} ; Error : {1:s} ").format(self.content, str(e))
+
     def __str__(self):
         return _('Base rule') + " : " + self.name
 
-class RuleElement(models.Model):
-    direction = models.CharField(max_length=15, choices=direction_choices)
-    baserule = models.ForeignKey(BaseRule)
-
-    class Meta:
-        unique_together = (('direction','baserule'),)
-
-    def __str__(self):
-        return self.direction + "-" + self.baserule.__str__()
 
 class RuleSet(BaseRule):
     name = models.CharField(max_length=50)
-    elements = models.ManyToManyField(RuleElement,through='RuleSetElement')
+    elements = models.ManyToManyField(BaseRule, through='RuleSetElement', related_name='baserule')
 
     def __str__(self):
         return _('Rule Set')+ " : " + self.name
 
-
 class RuleSetElement(OrderedModel):
+    direction = models.CharField(max_length=15, choices=direction_choices)
     ruleset = models.ForeignKey(RuleSet)
-    rule = models.ForeignKey(RuleElement)
-    order_with_respect_to = 'rule'
+    baserule = models.ForeignKey(BaseRule, related_name='elements_ruleset')
+    order_with_respect_to = 'baserule'
 
     class Meta:
-        ordering = ('rule','order')
+        ordering = ('baserule','order')
 
-
-# Create your models here.
+    def __str__(self):
+        return self.direction + "-" + self.rule.__str__()

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from planner.models.models import SimpleRule, RuleElement, RuleSetElement, \
+from planner.models.models import SimpleRule, RuleSetElement, \
    RuleSet, BaseRule, DateTimeRule
 import re
 
@@ -90,15 +90,11 @@ class SimpleRuleSerializer(serializers.HyperlinkedModelSerializer):
         'bysetpos', 'bymonthday', 'byyearday', 'byweekno', 'byhour', 'byminute',
         'bysecond', 'byeaster', 'next10')
 
-class RuleElementSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = RuleElement
-        fields = ('url', 'direction', 'baserule',)
 
 class RuleSetElementSerializer(serializers.ModelSerializer):
     class Meta:
         model = RuleSetElement
-        fields = ('url', 'ruleset', 'rule', 'order')
+        fields = ('url', 'direction', 'ruleset', 'baserule', 'order')
 
 class RuleSetSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:

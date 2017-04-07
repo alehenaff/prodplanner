@@ -1,3 +1,3 @@
-from .serializers import SimpleRuleSerializer, RuleElementSerializer, \
+from .serializers import SimpleRuleSerializer, \
     RuleSetElementSerializer, RuleSetSerializer, BaseRuleSerializer, \
     DateTimeRuleSerializer
