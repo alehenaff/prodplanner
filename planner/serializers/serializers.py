@@ -25,9 +25,9 @@ class SimpleRuleSerializer(serializers.HyperlinkedModelSerializer):
     bymonthday = serializers.CharField(allow_blank=True)
     byyearday = serializers.CharField(allow_blank=True)
     byweekno = serializers.CharField(allow_blank=True)
-    byhour = serializers.CharField(allow_blank=True)
-    byminute = serializers.CharField(allow_blank=True)
-    bysecond = serializers.CharField(allow_blank=True)
+    byhour = serializers.CharField(allow_blank=True, default='0', initial='0')
+    byminute = serializers.CharField(allow_blank=True, default='0', initial='0')
+    bysecond = serializers.CharField(allow_blank=True, default='0', initial='0')
     byeaster = serializers.CharField(allow_blank=True)
 
     def validate_byweekday(self,value):
