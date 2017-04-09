@@ -19,16 +19,17 @@ def pattern_validate(nbmax):
 
 class SimpleRuleSerializer(serializers.HyperlinkedModelSerializer):
 
-    byweekday = serializers.CharField(allow_blank=True)
-    bymonth = serializers.CharField(allow_blank=True)
-    bysetpos = serializers.CharField(allow_blank=True)
-    bymonthday = serializers.CharField(allow_blank=True)
-    byyearday = serializers.CharField(allow_blank=True)
-    byweekno = serializers.CharField(allow_blank=True)
-    byhour = serializers.CharField(allow_blank=True, default='0', initial='0')
-    byminute = serializers.CharField(allow_blank=True, default='0', initial='0')
-    bysecond = serializers.CharField(allow_blank=True, default='0', initial='0')
-    byeaster = serializers.CharField(allow_blank=True)
+    wkst = serializers.CharField(required=False, default="MO")
+    byweekday = serializers.CharField(required=False, allow_blank=True, default='')
+    bymonth = serializers.CharField(required=False, allow_blank=True, default='')
+    bysetpos = serializers.CharField(required=False, allow_blank=True, default='')
+    bymonthday = serializers.CharField(required=False, allow_blank=True, default='')
+    byyearday = serializers.CharField(required=False, allow_blank=True, default='')
+    byweekno = serializers.CharField(required=False, allow_blank=True, default='')
+    byhour = serializers.CharField(required=False, allow_blank=True, default='0', initial='0')
+    byminute = serializers.CharField(required=False, allow_blank=True, default='0', initial='0')
+    bysecond = serializers.CharField(required=False, allow_blank=True, default='0', initial='0')
+    byeaster = serializers.CharField(required=False, allow_blank=True, default='')
 
     def validate_byweekday(self,value):
         weekday_pattern = "^$|^(MO|TU|WE|TH|FR|SA|SU)(\([+|-]\d\)){0,1}(,(MO|TU|WE|TH|FR|SA|SU)(\([+|-]\d\)){0,1})*$"

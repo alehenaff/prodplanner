@@ -87,7 +87,8 @@ DATABASES = {
 }
 
 REST_FRAMEWORK = {
-    'EXCEPTION_HANDLER' : 'planner.utils.custom_exception_handler'
+    'EXCEPTION_HANDLER' : 'planner.utils.custom_exception_handler',
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json'
 }
 
 # Password validation

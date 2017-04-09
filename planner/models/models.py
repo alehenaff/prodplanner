@@ -99,6 +99,10 @@ class RuleSet(BaseRule):
     def __str__(self):
         return _('Rule Set')+ " : " + self.name
 
+    def calculate(self):
+        for elem in self.elements.all():
+            pass
+
 class RuleSetElement(OrderedModel):
     direction = models.CharField(max_length=15, choices=direction_choices)
     ruleset = models.ForeignKey(RuleSet)
