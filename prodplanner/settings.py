@@ -120,7 +120,7 @@ LANGUAGES = (
   ('en' , gettext('English')),
   ('fr', gettext('French'))
 )
-MODELTRANSLATION_DEFAULT_LANGUAGE = 'en'
+MODELTRANSLATION_DEFAULT_LANGUAGE = 'fr'
 MODELTRANSLATION_LANGUAGES = ('fr', 'en')
 
 TIME_ZONE = 'UTC'
