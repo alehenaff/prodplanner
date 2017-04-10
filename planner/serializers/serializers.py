@@ -123,7 +123,6 @@ class ShortBaseRuleSerializer(serializers.HyperlinkedModelSerializer):
         return super(BaseRuleSerializer, self).to_representation(obj)
 
 class RuleSetElementSerializer(serializers.ModelSerializer):
-    baserule = ShortBaseRuleSerializer(read_only=True)
     class Meta:
         model = RuleSetElement
         fields = ('url', 'direction', 'ruleset', 'baserule', 'order')
