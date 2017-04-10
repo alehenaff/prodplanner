@@ -16,6 +16,11 @@ def pattern_validate(nbmax):
             integer or sequence of integers (comma separated)")
     return validate
 
+class ShortSimpleRuleSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = SimpleRule
+        fields = ('url', 'content', 'name_fr', 'name_en',)
+
 
 class SimpleRuleSerializer(serializers.HyperlinkedModelSerializer):
 
@@ -92,17 +97,6 @@ class SimpleRuleSerializer(serializers.HyperlinkedModelSerializer):
         'bysecond', 'byeaster', 'next10')
 
 
-class RuleSetElementSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = RuleSetElement
-        fields = ('url', 'direction', 'ruleset', 'baserule', 'order')
-
-class RuleSetSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = RuleSet
-        fields = ('url', 'name_fr', 'name_en', 'elements',)
-
-
 class BaseRuleSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = BaseRule
@@ -114,6 +108,37 @@ class BaseRuleSerializer(serializers.HyperlinkedModelSerializer):
         elif isinstance(obj, DateTimeRule):
             return DateTimeRuleSerializer(obj, context=self.context).to_representation(obj)
         return super(BaseRuleSerializer, self).to_representation(obj)
+
+
+class ShortBaseRuleSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = BaseRule
+        fields = ('id',)
+
+    def to_representation(self, obj):
+        if isinstance(obj, SimpleRule):
+            return ShortSimpleRuleSerializer(obj, context=self.context).to_representation(obj)
+        elif isinstance(obj, DateTimeRule):
+            return DateTimeRuleSerializer(obj, context=self.context).to_representation(obj)
+        return super(BaseRuleSerializer, self).to_representation(obj)
+
+class RuleSetElementSerializer(serializers.ModelSerializer):
+    baserule = ShortBaseRuleSerializer(read_only=True)
+    class Meta:
+        model = RuleSetElement
+        fields = ('url', 'direction', 'ruleset', 'baserule', 'order')
+
+class ShortRuleSetElementSerializer(serializers.ModelSerializer):
+    baserule = ShortBaseRuleSerializer(read_only=True)
+    class Meta:
+        model = RuleSetElement
+        fields = ('url', 'direction', 'baserule', 'order')
+
+class RuleSetSerializer(serializers.HyperlinkedModelSerializer):
+    orderedelements = ShortRuleSetElementSerializer(source='rulesetelement_set',many=True, read_only=True)
+    class Meta:
+        model = RuleSet
+        fields = ('url', 'name_fr', 'name_en', 'orderedelements',)
 
 class DateTimeRuleSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
