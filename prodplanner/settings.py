@@ -113,12 +113,12 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'fr-fr'
 
 gettext = lambda s: s
 LANGUAGES = (
+  ('fr', gettext('French')),
   ('en' , gettext('English')),
-  ('fr', gettext('French'))
 )
 MODELTRANSLATION_DEFAULT_LANGUAGE = 'fr'
 MODELTRANSLATION_LANGUAGES = ('fr', 'en')

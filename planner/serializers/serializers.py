@@ -100,7 +100,7 @@ class RuleSetElementSerializer(serializers.ModelSerializer):
 class RuleSetSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = RuleSet
-        fields = ('url', 'name', 'elements',)
+        fields = ('url', 'name_fr', 'name_en', 'elements',)
 
 
 class BaseRuleSerializer(serializers.HyperlinkedModelSerializer):

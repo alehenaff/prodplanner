@@ -16,11 +16,11 @@ class SimpleRuleTests(APITestCase):
 class RuleSetTests(APITestCase):
     def test_create_ruleset(self):
         url = '/planner/rulesets/'
-        data = {"name" : "Jours fériés"}
+        data = {"name_fr" : "Jours fériés France", "name_en" : "Days off France"}
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(RuleSet.objects.count(),1)
-        self.assertEqual(RuleSet.objects.get().name,'Jours fériés')
+        self.assertEqual(RuleSet.objects.get().name,'Jours fériés France')
 
 class RuleSetElementTests(APITestCase):
     def test_create_rulesetelement(self):
@@ -29,13 +29,13 @@ class RuleSetElementTests(APITestCase):
         response = self.client.post(url, data, format='json')
 
         url = '/planner/rulesets/'
-        data = {"name" : "Jours fériés"}
+        data = {"name_fr" : "Jours fériés France", "name_en" : "Days off France"}
         response = self.client.post(url, data, format='json')
 
         url = '/planner/rulesetelements/'
         data = {"direction":"INCLUDE", "ruleset" : RuleSet.objects.get().pk, \
         "baserule" : SimpleRule.objects.get().pk }
-        
+
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(RuleSetElement.objects.count(),1)
