@@ -5,8 +5,9 @@ from planner.serializers import SimpleRuleSerializer, \
 from planner.models.models import SimpleRule,  \
     RuleSetElement, RuleSet, BaseRule, DateTimeRule
 import re
-# from django.http import JsonResponse
-# from rest_framework.decorators import detail_route
+from rest_framework.response import Response
+from rest_framework.decorators import detail_route
+from dateutil.parser import parse
 
 class BaseRuleViewSet(viewsets.ModelViewSet):
     queryset = BaseRule.objects.all()
@@ -16,7 +17,6 @@ class SimpleRuleViewSet(viewsets.ModelViewSet):
      queryset = SimpleRule.objects.all()
      serializer_class = SimpleRuleSerializer
 
-
 class RuleSetElementViewSet(viewsets.ModelViewSet):
     queryset = RuleSetElement.objects.all()
     serializer_class = RuleSetElementSerializer
@@ -24,6 +24,13 @@ class RuleSetElementViewSet(viewsets.ModelViewSet):
 class RuleSetViewSet(viewsets.ModelViewSet):
     queryset = RuleSet.objects.all()
     serializer_class = RuleSetSerializer
+
+    @detail_route(methods=['get'])
+    def between(self, request, pk=None):
+        ruleset = self.get_object()
+        return Response(ruleset.between(parse(request.GET.get('start')), \
+        parse(request.GET.get('end'))))
+
 
 class DateTimeRuleViewSet(viewsets.ModelViewSet):
     queryset = DateTimeRule.objects.all()

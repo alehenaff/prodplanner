@@ -32,10 +32,14 @@ direction_choices = (
 )
 
 class BaseRule(PolymorphicModel):
-    pass
+    def to_dateutil(self):
+        pass
 
 class DateTimeRule(BaseRule):
     datetime = models.DateTimeField()
+
+    def to_dateutil(self):
+        return datetime;
 
     def __str__(self):
         return _("DateTime")+" : "+str(self.datetime)
@@ -82,11 +86,19 @@ class SimpleRule(BaseRule):
         except ValueError as e:
             return _("Unable to evaluate {0:s} ; Error : {1:s} ").format(self.content, str(e))
 
-#    def between(self, start, end):
-#        try:
-#            return rr.rrulestr(self.content).between(start, end, inc=True)
-#        except ValueError as e:
-#            return _("Unable to evaluate {0:s} ; Error : {1:s} ").format(self.content, str(e))
+    def to_dateutil(self):
+        try:
+            r = rr.rrulestr(self.content)
+            return r
+        except ValueError as e:
+            return _("Unable to evaluate {0:s} ; Error : {1:s} ").format(self.content, str(e))
+
+
+    def between(self, start, end):
+        try:
+            return self.to_rrule().between(start, end, inc=True)
+        except ValueError as e:
+            return _("Unable to evaluate {0:s} ; Error : {1:s} ").format(self.content, str(e))
 
     def __str__(self):
         return _('Base rule') + " : " + self.name
@@ -99,9 +111,31 @@ class RuleSet(BaseRule):
     def __str__(self):
         return _('Rule Set')+ " : " + self.name
 
-    def calculate(self):
-        for elem in self.elements.all():
-            pass
+    def to_dateutil(self):
+        r = rr.rruleset()
+        for elem in self.rulesetelement_set.all():
+            if isinstance(elem.baserule, DateTimeRule):
+                if elem.direction=='INCLUDE':
+                    r.rdate(elem.baserule.to_dateutil())
+                else:
+                    r.exdate(elem.baserule.to_dateutil())
+            elif isinstance(elem.baserule, SimpleRule):
+                if elem.direction=='INCLUDE':
+                    r.rrule(elem.baserule.to_dateutil())
+                else:
+                    r.exrule(elem.baserule.to_dateutil())
+            elif isinstance(elem.baserule, RuleSet):
+                if elem.direction=='INCLUDE':
+                    r.rrule(elem.baserule.to_dateutil())
+                else:
+                    r.exrule(elem.baserule.to_dateutil())
+            else:
+                pass
+        return r
+
+    def between(self, start, end):
+        return self.to_dateutil().between(start, end, inc=True)
+
 
 class RuleSetElement(OrderedModel):
     direction = models.CharField(max_length=15, choices=direction_choices)
@@ -113,4 +147,4 @@ class RuleSetElement(OrderedModel):
         ordering = ('baserule','order')
 
     def __str__(self):
-        return self.direction + "-" + self.rule.__str__()
+        return self.direction + "-" + self.baserule.__str__()
