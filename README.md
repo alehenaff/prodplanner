@@ -43,3 +43,8 @@ Load fixtures : python manage.py loaddata fixtures/planner.json
 
 # version
 Alpha developpement
+
+# tested with
+
+* Python 3.5.3
+* Django 1.10.6
