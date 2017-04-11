@@ -48,3 +48,9 @@ Alpha developpement
 
 * Python 3.5.3
 * Django 1.10.6
+
+# todo
+* finish ordering in rulesets
+* easily import/export rules
+* make it as a library or django-app
+* ... suggestions welcomed
