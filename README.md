@@ -4,11 +4,16 @@ prodplanner
 
 Django DRF project to calculate dates for reccuring actions
 
-python manage.py makemigrations
+Based on dateutil ; it is possible to define rrules and dates and create rrulesets including or excluding rrulesets, rrules or dates.
 
-python manage.py migrate
+To perform it :
 
-Load fixtures : python manage.py loaddata fixtures/planner.json
+* rrules are defined at '/planner/simplerules/',
+* dates at '/planner/daterules/'
+* rrulesets at '/planner/rulesets/'
+* including or excluding elements from a rruleset at '/planner/rulesetelements/'
+
+it is then possible to query a rruleset to get occurences on a time interval :
 
 http://localhost:8000/planner/rulesets/4/between/?start=2017-01-01T00:00:00&end=2019-01-01T00:00:00
 
@@ -27,6 +32,14 @@ Vary: Accept
     "2018-12-25T00:00:00"
 ]
 ```
+
+python manage.py makemigrations
+
+python manage.py migrate
+
+Load fixtures : python manage.py loaddata fixtures/planner.json
+
+
 
 # version
 Alpha developpement
