@@ -120,6 +120,8 @@ class ShortBaseRuleSerializer(serializers.HyperlinkedModelSerializer):
             return ShortSimpleRuleSerializer(obj, context=self.context).to_representation(obj)
         elif isinstance(obj, DateTimeRule):
             return DateTimeRuleSerializer(obj, context=self.context).to_representation(obj)
+        elif isinstance(obj, RuleSet):
+            return RuleSetSerializer(obj, context=self.context).to_representation(obj)
         return super(BaseRuleSerializer, self).to_representation(obj)
 
 class RuleSetElementSerializer(serializers.ModelSerializer):
