@@ -5,7 +5,9 @@ prodplanner
 Django DRF project to calculate dates for reccuring actions
 
 python manage.py makemigrations
+
 python manage.py migrate
+
 Load fixtures : python manage.py loaddata fixtures/planner.json
 
 http://localhost:8000/planner/rulesets/4/between/?start=2017-01-01T00:00:00&end=2019-01-01T00:00:00
