@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from planner.viewsets import viewsets
+from planner import viewsets
 
 from rest_framework import routers
 
@@ -24,7 +24,7 @@ router.register(r'planner/simplerules',viewsets.SimpleRuleViewSet)
 router.register(r'planner/rulesetelements',viewsets.RuleSetElementViewSet)
 router.register(r'planner/rulesets',viewsets.RuleSetViewSet)
 router.register(r'planner/baserules',viewsets.BaseRuleViewSet)
-router.register(r'planner/daterules',viewsets.DateTimeRuleViewSet)
+router.register(r'planner/daterules',viewsets.DateRuleViewSet)
 
 urlpatterns = [
     url(r'', include(router.urls)),

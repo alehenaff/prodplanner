@@ -4,7 +4,9 @@ prodplanner
 
 Django DRF project to calculate dates for reccuring actions
 
-Based on dateutil ; it is possible to define rrules and dates and create rrulesets including or excluding rrulesets, rrules or dates.
+Based on dateutil ; it is possible to define rrules and dates and create rrulesets including or excluding rrulesets, rrules or datetimes.
+
+The first goal is to get a list of dates, not datetimes.
 
 To perform it :
 
@@ -24,12 +26,12 @@ Content-Type: application/json
 Vary: Accept
 
 [
-    "2017-04-17T00:00:00",
-    "2017-07-14T00:00:00",
-    "2017-12-25T00:00:00",
-    "2018-04-02T00:00:00",
-    "2018-07-14T00:00:00",
-    "2018-12-25T00:00:00"
+    "2017-04-17",
+    "2017-07-14",
+    "2017-12-25",
+    "2018-04-02",
+    "2018-07-14",
+    "2018-12-25"
 ]
 ```
 

@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from planner.models.models import SimpleRule, RuleSetElement, \
-   RuleSet, BaseRule, DateTimeRule
+from planner.models import SimpleRule, RuleSetElement, \
+   RuleSet, BaseRule, DateRule
 import re
 
 def pattern_validate(nbmax):
@@ -31,9 +31,6 @@ class SimpleRuleSerializer(serializers.HyperlinkedModelSerializer):
     bymonthday = serializers.CharField(required=False, allow_blank=True, default='')
     byyearday = serializers.CharField(required=False, allow_blank=True, default='')
     byweekno = serializers.CharField(required=False, allow_blank=True, default='')
-    byhour = serializers.CharField(required=False, allow_blank=True, default='0', initial='0')
-    byminute = serializers.CharField(required=False, allow_blank=True, default='0', initial='0')
-    bysecond = serializers.CharField(required=False, allow_blank=True, default='0', initial='0')
     byeaster = serializers.CharField(required=False, allow_blank=True, default='')
 
     def validate_byweekday(self,value):
@@ -69,21 +66,6 @@ class SimpleRuleSerializer(serializers.HyperlinkedModelSerializer):
         validation(value)
         return value
 
-    def validate_byhour(self, value):
-        validation = pattern_validate(24)
-        validation(value)
-        return value
-
-    def validate_byminute(self, value):
-        validation = pattern_validate(60)
-        validation(value)
-        return value
-
-    def validate_bysecond(self, value):
-        validation = pattern_validate(60)
-        validation(value)
-        return value
-
     def validate_byeaster(self, value):
         validation = pattern_validate(60)
         validation(value)
@@ -93,8 +75,7 @@ class SimpleRuleSerializer(serializers.HyperlinkedModelSerializer):
         model = SimpleRule
         fields = (
         'url', 'content', 'name_fr', 'name_en', 'freq', 'wkst', 'byweekday', 'bymonth',
-        'bysetpos', 'bymonthday', 'byyearday', 'byweekno', 'byhour', 'byminute',
-        'bysecond', 'byeaster', 'next10')
+        'bysetpos', 'bymonthday', 'byyearday', 'byweekno', 'byeaster', 'next10')
 
 
 class BaseRuleSerializer(serializers.HyperlinkedModelSerializer):
@@ -105,8 +86,8 @@ class BaseRuleSerializer(serializers.HyperlinkedModelSerializer):
     def to_representation(self, obj):
         if isinstance(obj, SimpleRule):
             return SimpleRuleSerializer(obj, context=self.context).to_representation(obj)
-        elif isinstance(obj, DateTimeRule):
-            return DateTimeRuleSerializer(obj, context=self.context).to_representation(obj)
+        elif isinstance(obj, DateRule):
+            return DateRuleSerializer(obj, context=self.context).to_representation(obj)
         return super(BaseRuleSerializer, self).to_representation(obj)
 
 
@@ -118,8 +99,8 @@ class ShortBaseRuleSerializer(serializers.HyperlinkedModelSerializer):
     def to_representation(self, obj):
         if isinstance(obj, SimpleRule):
             return ShortSimpleRuleSerializer(obj, context=self.context).to_representation(obj)
-        elif isinstance(obj, DateTimeRule):
-            return DateTimeRuleSerializer(obj, context=self.context).to_representation(obj)
+        elif isinstance(obj, DateRule):
+            return DateRuleSerializer(obj, context=self.context).to_representation(obj)
         elif isinstance(obj, RuleSet):
             return RuleSetSerializer(obj, context=self.context).to_representation(obj)
         return super(BaseRuleSerializer, self).to_representation(obj)
@@ -139,9 +120,9 @@ class RuleSetSerializer(serializers.HyperlinkedModelSerializer):
     orderedelements = ShortRuleSetElementSerializer(source='rulesetelement_set',many=True, read_only=True)
     class Meta:
         model = RuleSet
-        fields = ('url', 'name_fr', 'name_en', 'orderedelements',)
+        fields = ('url', 'name_fr', 'name_en', 'orderedelements', 'next10')
 
-class DateTimeRuleSerializer(serializers.HyperlinkedModelSerializer):
+class DateRuleSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = DateTimeRule
-        fields=('url','datetime',)
+        model = DateRule
+        fields=('url','date',)

@@ -2,7 +2,7 @@ from django.db import models
 from polymorphic.models import PolymorphicModel
 from django.utils.translation import ugettext_lazy as _
 from ordered_model.models import OrderedModel
-import datetime
+from datetime import datetime
 from dateutil import rrule as rr
 import itertools
 
@@ -20,10 +20,7 @@ freq_choices = (
     ('YEARLY', _('Yearly')),
     ('MONTHLY', _('Monthly')),
     ('WEEKLY', _('Weekly')),
-    ('DAILY', _('Daily')),
-    ('HOURLY', _('Hourly')),
-    ('MINUTELY', _('Minutely')),
-    ('SECONDLY', _('Secondly'))
+    ('DAILY', _('Daily'))
 )
 
 direction_choices = (
@@ -35,14 +32,14 @@ class BaseRule(PolymorphicModel):
     def to_dateutil(self):
         pass
 
-class DateTimeRule(BaseRule):
-    datetime = models.DateTimeField()
+class DateRule(BaseRule):
+    date = models.DateField()
 
     def to_dateutil(self):
-        return datetime;
+        return datetime.combine(self.date,datetime.min.time());
 
     def __str__(self):
-        return _("DateTime")+" : "+str(self.datetime)
+        return _("Date")+" : "+str(self.date)
 
 class SimpleRule(BaseRule):
     name = models.CharField(max_length=50)
@@ -55,16 +52,13 @@ class SimpleRule(BaseRule):
     bymonthday = models.CharField(max_length=50, default=None, blank=True)
     byyearday = models.CharField(max_length=200, default=None, blank=True)
     byweekno = models.CharField(max_length=200, default=None, blank=True)
-    byhour = models.CharField(max_length=200, default='0')
-    byminute = models.CharField(max_length=200, default='0')
-    bysecond = models.CharField(max_length=200, default='0')
     byeaster = models.CharField(max_length=30, default=None, blank=True)
 
     @property
     def content(self):
         elem = lambda x, y: ";{1:s}={0:s}".format(y, x) if (y != "") else ""
 
-        str = 'FREQ={freq};WKST={wkst}{bwd}{bm}{bsp}{bmd}{byd}{bwn}{bh}{bmi}{bs}{be}'.format(
+        str = 'FREQ={freq};WKST={wkst}{bwd}{bm}{bsp}{bmd}{byd}{bwn}{bhms}{be}'.format(
             freq=self.freq, wkst=self.wkst,
             bwd=elem('BYWEEKDAY', self.byweekday),
             bm=elem('BYMONTH', self.bymonth),
@@ -72,8 +66,7 @@ class SimpleRule(BaseRule):
             bmd=elem('BYMONTHDAY', self.bymonthday),
             byd=elem('BYYEARDAY', self.byyearday),
             bwn=elem('BYWEEKNO', self.byweekno),
-            bh=elem('BYHOUR', self.byhour), bmi=elem('BYMINUTE', self.byminute),
-            bs=elem('BYSECOND', self.bysecond),
+            bhms=';BYHOUR=0;BYMINUTE=0;BYSECOND=0',
             be=elem('BYEASTER', self.byeaster)
         )
         return str
@@ -81,8 +74,8 @@ class SimpleRule(BaseRule):
     @property
     def next10(self):
         try:
-            r = rr.rrulestr(self.content,dtstart=datetime.datetime.now())
-            return itertools.islice(r,10) # 10 first items
+            r = rr.rrulestr(self.content,dtstart=datetime.now())
+            return map(lambda x:x.date(), itertools.islice(r,10)) # 10 first items
         except ValueError as e:
             return _("Unable to evaluate {0:s} ; Error : {1:s} ").format(self.content, str(e))
 
@@ -96,7 +89,7 @@ class SimpleRule(BaseRule):
 
     def between(self, start, end):
         try:
-            return self.to_rrule().between(start, end, inc=True)
+            return map(lambda x:x.date(), self.to_rrule().between(start, end, inc=True))
         except ValueError as e:
             return _("Unable to evaluate {0:s} ; Error : {1:s} ").format(self.content, str(e))
 
@@ -114,7 +107,7 @@ class RuleSet(BaseRule):
     def to_dateutil(self):
         r = rr.rruleset()
         for elem in self.rulesetelement_set.all():
-            if isinstance(elem.baserule, DateTimeRule):
+            if isinstance(elem.baserule, DateRule):
                 if elem.direction=='INCLUDE':
                     r.rdate(elem.baserule.to_dateutil())
                 else:
@@ -133,8 +126,17 @@ class RuleSet(BaseRule):
                 pass
         return r
 
+    @property
+    def next10(self):
+        try:
+        #    import pdb; pdb.set_trace()
+            r = self.to_dateutil()
+            return map(lambda x:x.date(), itertools.islice(r,10)) # 10 first items
+        except ValueError as e:
+            return _("Unable to evaluate {0:s} ; Error : {1:s} ").format(self.__str__, str(e))
+
     def between(self, start, end):
-        return self.to_dateutil().between(start, end, inc=True)
+        return map(lambda x:x.date(),self.to_dateutil().between(start, end, inc=True))
 
 
 class RuleSetElement(OrderedModel):

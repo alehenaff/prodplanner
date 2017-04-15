@@ -1,9 +1,9 @@
 from rest_framework import viewsets
 from planner.serializers import SimpleRuleSerializer, \
     RuleSetElementSerializer, RuleSetSerializer, BaseRuleSerializer, \
-    DateTimeRuleSerializer
-from planner.models.models import SimpleRule,  \
-    RuleSetElement, RuleSet, BaseRule, DateTimeRule
+    DateRuleSerializer
+from planner.models import SimpleRule,  \
+    RuleSetElement, RuleSet, BaseRule, DateRule
 import re
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
@@ -32,6 +32,6 @@ class RuleSetViewSet(viewsets.ModelViewSet):
         parse(request.GET.get('end'))))
 
 
-class DateTimeRuleViewSet(viewsets.ModelViewSet):
-    queryset = DateTimeRule.objects.all()
-    serializer_class = DateTimeRuleSerializer
+class DateRuleViewSet(viewsets.ModelViewSet):
+    queryset = DateRule.objects.all()
+    serializer_class = DateRuleSerializer

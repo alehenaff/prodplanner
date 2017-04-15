@@ -40,4 +40,9 @@ class RuleSetElementTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(RuleSetElement.objects.count(),1)
 
+        url= '/planner/rulesets/'+ str(RuleSet.objects.get().pk) +'/between/?start=2017-01-01&end=2018-01-01'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.content.decode('UTF-8'),'["2017-04-17"]')
+
 # Create your tests here.
