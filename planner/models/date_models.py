@@ -106,7 +106,7 @@ class RuleSet(BaseRule):
 
     def to_dateutil(self):
         r = rr.rruleset()
-        for elem in self.rulesetelement_set.all():
+        for elem in self.rulesetelement_set.order_by('order'):
             if isinstance(elem.baserule, DateRule):
                 if elem.direction=='INCLUDE':
                     r.rdate(elem.baserule.to_dateutil())
