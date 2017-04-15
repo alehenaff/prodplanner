@@ -1,7 +1,8 @@
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
-from planner.models import SimpleRule, RuleSet, RuleSetElement
+from planner.models import SimpleRule, RuleSet, RuleSetElement, DateRule
+from datetime import datetime, date
 
 class SimpleRuleTests(APITestCase):
     def test_create_simplerule(self):
@@ -44,5 +45,41 @@ class RuleSetElementTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.content.decode('UTF-8'),'["2017-04-17"]')
+
+    def test_precedence(self):
+        '''
+        https://www.ietf.org/rfc/rfc2445.txt
+        This implies that start date and times within exclusion related
+        properties (i.e., "EXDATE" and "EXRULE") take precedence over those
+        specified by inclusion properties (i.e., "RDATE" and "RRULE").
+
+        There is so no need to order inclusions / exclusions
+        '''
+
+        mercredis = SimpleRule.objects.create(name_fr='Mercredis', name_en='Wednesdays',\
+         freq='WEEKLY', byweekday='WE', bymonth='', bysetpos='', bymonthday='', byyearday='',\
+         byweekno='', byeaster='')
+        mercredis.save()
+
+        derniers_mercredis_mois = SimpleRule.objects.create(name_fr="Derniers mercredis du mois",\
+          name_en="Last wednesdays of month", freq="MONTHLY", byweekday="WE", bymonth='',bysetpos="-1",\
+          bymonthday='', byyearday='', byweekno='', byeaster='')
+        derniers_mercredis_mois.save()
+
+        avril26_2017 = DateRule.objects.create(date = '2017-04-26')
+        avril26_2017.save()
+
+        ruleset1 = RuleSet.objects.create(name='ruleset1')
+        RuleSetElement.objects.create(direction='INCLUDE', baserule=mercredis, ruleset = ruleset1)
+        RuleSetElement.objects.create(direction='EXCLUDE', baserule=derniers_mercredis_mois, ruleset = ruleset1)
+        RuleSetElement.objects.create(direction='INCLUDE', baserule=avril26_2017, ruleset = ruleset1)
+        self.assertTrue(datetime(2017,3,22).date() in list(ruleset1.between(datetime(2017,3,1),datetime(2017,5,1))))
+        self.assertFalse(datetime(2017,4,26).date() in list(ruleset1.between(datetime(2017,3,1),datetime(2017,5,1))))
+
+
+
+
+
+
 
 # Create your tests here.

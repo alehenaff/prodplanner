@@ -1,7 +1,6 @@
 from django.db import models
 from polymorphic.models import PolymorphicModel
 from django.utils.translation import ugettext_lazy as _
-from ordered_model.models import OrderedModel
 from datetime import datetime
 from dateutil import rrule as rr
 import itertools
@@ -29,15 +28,17 @@ direction_choices = (
 )
 
 class BaseRule(PolymorphicModel):
-    def to_dateutil(self):
+    def to_dateutil(self, start):
         pass
 
 class DateRule(BaseRule):
     date = models.DateField()
 
-    def to_dateutil(self):
-        return datetime.combine(self.date,datetime.min.time());
-
+    def to_dateutil(self, start):
+        if (start<datetime.combine(self.date,datetime.min.time())):
+            return datetime.combine(self.date,datetime.min.time());
+        else:
+            return None
     def __str__(self):
         return _("Date")+" : "+str(self.date)
 
@@ -74,14 +75,14 @@ class SimpleRule(BaseRule):
     @property
     def next10(self):
         try:
-            r = rr.rrulestr(self.content,dtstart=datetime.now())
+            r = self.to_dateutil(datetime.now())
             return map(lambda x:x.date(), itertools.islice(r,10)) # 10 first items
         except ValueError as e:
             return _("Unable to evaluate {0:s} ; Error : {1:s} ").format(self.content, str(e))
 
-    def to_dateutil(self):
+    def to_dateutil(self, start):
         try:
-            r = rr.rrulestr(self.content)
+            r = rr.rrulestr(self.content, dtstart=start)
             return r
         except ValueError as e:
             return _("Unable to evaluate {0:s} ; Error : {1:s} ").format(self.content, str(e))
@@ -89,7 +90,7 @@ class SimpleRule(BaseRule):
 
     def between(self, start, end):
         try:
-            return map(lambda x:x.date(), self.to_rrule().between(start, end, inc=True))
+            return map(lambda x:x.date(), self.to_dateutil(start).between(start, end, inc=True))
         except ValueError as e:
             return _("Unable to evaluate {0:s} ; Error : {1:s} ").format(self.content, str(e))
 
@@ -104,24 +105,24 @@ class RuleSet(BaseRule):
     def __str__(self):
         return _('Rule Set')+ " : " + self.name
 
-    def to_dateutil(self):
+    def to_dateutil(self,start):
         r = rr.rruleset()
-        for elem in self.rulesetelement_set.order_by('order'):
+        for elem in self.rulesetelement_set.all():
             if isinstance(elem.baserule, DateRule):
                 if elem.direction=='INCLUDE':
-                    r.rdate(elem.baserule.to_dateutil())
+                    r.rdate(elem.baserule.to_dateutil(start))
                 else:
-                    r.exdate(elem.baserule.to_dateutil())
+                    r.exdate(elem.baserule.to_dateutil(start))
             elif isinstance(elem.baserule, SimpleRule):
                 if elem.direction=='INCLUDE':
-                    r.rrule(elem.baserule.to_dateutil())
+                    r.rrule(elem.baserule.to_dateutil(start))
                 else:
-                    r.exrule(elem.baserule.to_dateutil())
+                    r.exrule(elem.baserule.to_dateutil(start))
             elif isinstance(elem.baserule, RuleSet):
                 if elem.direction=='INCLUDE':
-                    r.rrule(elem.baserule.to_dateutil())
+                    r.rrule(elem.baserule.to_dateutil(start))
                 else:
-                    r.exrule(elem.baserule.to_dateutil())
+                    r.exrule(elem.baserule.to_dateutil(start))
             else:
                 pass
         return r
@@ -130,23 +131,19 @@ class RuleSet(BaseRule):
     def next10(self):
         try:
         #    import pdb; pdb.set_trace()
-            r = self.to_dateutil()
+            r = self.to_dateutil(datetime.now())
             return map(lambda x:x.date(), itertools.islice(r,10)) # 10 first items
         except ValueError as e:
             return _("Unable to evaluate {0:s} ; Error : {1:s} ").format(self.__str__, str(e))
 
     def between(self, start, end):
-        return map(lambda x:x.date(),self.to_dateutil().between(start, end, inc=True))
+        return map(lambda x:x.date(),self.to_dateutil(start).between(start, end, inc=True))
 
 
-class RuleSetElement(OrderedModel):
+class RuleSetElement(models.Model):
     direction = models.CharField(max_length=15, choices=direction_choices)
     ruleset = models.ForeignKey(RuleSet)
     baserule = models.ForeignKey(BaseRule, related_name='elements_ruleset')
-    order_with_respect_to = 'baserule'
-
-    class Meta:
-        ordering = ('baserule','order')
 
     def __str__(self):
         return self.direction + "-" + self.baserule.__str__()

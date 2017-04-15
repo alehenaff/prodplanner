@@ -108,13 +108,13 @@ class ShortBaseRuleSerializer(serializers.HyperlinkedModelSerializer):
 class RuleSetElementSerializer(serializers.ModelSerializer):
     class Meta:
         model = RuleSetElement
-        fields = ('url', 'direction', 'ruleset', 'baserule', 'order')
+        fields = ('url', 'direction', 'ruleset', 'baserule')
 
 class ShortRuleSetElementSerializer(serializers.ModelSerializer):
     baserule = ShortBaseRuleSerializer(read_only=True)
     class Meta:
         model = RuleSetElement
-        fields = ('url', 'direction', 'baserule', 'order')
+        fields = ('url', 'direction', 'baserule')
 
 class RuleSetSerializer(serializers.HyperlinkedModelSerializer):
     orderedelements = ShortRuleSetElementSerializer(source='rulesetelement_set',many=True, read_only=True)
