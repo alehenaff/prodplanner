@@ -44,7 +44,7 @@ class SimpleRuleSerializer(serializers.HyperlinkedModelSerializer):
         return value
 
 
-    def validate_month(self, value):
+    def validate_bymonth(self, value):
         validation = pattern_validate(12)
         validation(value)
         return value
