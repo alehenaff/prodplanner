@@ -17,7 +17,7 @@ To perform it :
 
 it is then possible to query a rruleset to get occurences on a time interval :
 
-http://localhost:8000/planner/rulesets/4/between/?start=2017-01-01T00:00:00&end=2019-01-01T00:00:00
+http://localhost:8000/planner/rulesets/a66d4242-8e2e-43bd-ba49-3970dc51ca28/between/?start=2017-01-01T00:00:00&end=2018-01-01T00:00:00
 
 ```
 HTTP 200 OK
@@ -26,12 +26,36 @@ Content-Type: application/json
 Vary: Accept
 
 [
+
+    "2017-01-01",
     "2017-04-17",
+    "2017-05-01",
+    "2017-05-08",
+    "2017-05-26",
+    "2017-06-05",
     "2017-07-14",
+    "2017-08-15",
+    "2017-11-01",
+    "2017-11-11",
     "2017-12-25",
-    "2018-04-02",
-    "2018-07-14",
-    "2018-12-25"
+    "2018-01-01"
+]
+```
+It is also possible to get next 10 occurences for a ruleset :
+
+http://localhost:8000/planner/rulesets/a66d4242-8e2e-43bd-ba49-3970dc51ca28/next10/
+```
+[
+    "2017-05-01",
+    "2017-05-08",
+    "2017-05-26",
+    "2017-06-05",
+    "2017-07-14",
+    "2017-08-15",
+    "2017-11-01",
+    "2017-11-11",
+    "2017-12-25",
+    "2018-01-01"
 ]
 ```
 
@@ -52,6 +76,5 @@ Alpha developpement
 * Django 1.10.6
 
 # todo
-* easily import/export rules
 * make it as a library or django-app
 * ... suggestions welcomed
