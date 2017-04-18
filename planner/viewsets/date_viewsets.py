@@ -17,6 +17,11 @@ class SimpleRuleViewSet(viewsets.ModelViewSet):
      queryset = SimpleRule.objects.all()
      serializer_class = SimpleRuleSerializer
 
+     @detail_route(methods=['get'])
+     def next10(self, request, pk=None):
+        rule = self.get_object()
+        return Response(ruleset.next10())
+
 class RuleSetElementViewSet(viewsets.ModelViewSet):
     queryset = RuleSetElement.objects.all()
     serializer_class = RuleSetElementSerializer
@@ -30,6 +35,11 @@ class RuleSetViewSet(viewsets.ModelViewSet):
         ruleset = self.get_object()
         return Response(ruleset.between(parse(request.GET.get('start')), \
         parse(request.GET.get('end'))))
+
+    @detail_route(methods=['get'])
+    def next10(self, request, pk=None):
+        ruleset = self.get_object()
+        return Response(ruleset.next10())
 
 
 class DateRuleViewSet(viewsets.ModelViewSet):

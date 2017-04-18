@@ -75,7 +75,7 @@ class SimpleRuleSerializer(serializers.HyperlinkedModelSerializer):
         model = SimpleRule
         fields = (
         'url', 'content', 'name_fr', 'name_en', 'freq', 'wkst', 'byweekday', 'bymonth',
-        'bysetpos', 'bymonthday', 'byyearday', 'byweekno', 'byeaster', 'next10')
+        'bysetpos', 'bymonthday', 'byyearday', 'byweekno', 'byeaster')
 
 
 class BaseRuleSerializer(serializers.HyperlinkedModelSerializer):
@@ -120,7 +120,7 @@ class RuleSetSerializer(serializers.HyperlinkedModelSerializer):
     orderedelements = ShortRuleSetElementSerializer(source='rulesetelement_set',many=True, read_only=True)
     class Meta:
         model = RuleSet
-        fields = ('url', 'name_fr', 'name_en', 'orderedelements', 'next10')
+        fields = ('url', 'name_fr', 'name_en', 'orderedelements')
 
 class DateRuleSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:

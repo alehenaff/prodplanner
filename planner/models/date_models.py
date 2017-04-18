@@ -4,6 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from datetime import datetime
 from dateutil import rrule as rr
 import itertools
+import uuid
 
 weekdays = (
     ('MO', _('Monday')),
@@ -28,6 +29,8 @@ direction_choices = (
 )
 
 class BaseRule(PolymorphicModel):
+    id = models.UUIDField(default=uuid.uuid4, primary_key= True, editable= False)
+
     def to_dateutil(self, start):
         pass
 
@@ -72,7 +75,6 @@ class SimpleRule(BaseRule):
         )
         return str
 
-    @property
     def next10(self):
         try:
             r = self.to_dateutil(datetime.now())
@@ -127,10 +129,8 @@ class RuleSet(BaseRule):
                 pass
         return r
 
-    @property
     def next10(self):
         try:
-        #    import pdb; pdb.set_trace()
             r = self.to_dateutil(datetime.now())
             return map(lambda x:x.date(), itertools.islice(r,10)) # 10 first items
         except ValueError as e:
@@ -141,6 +141,10 @@ class RuleSet(BaseRule):
 
 
 class RuleSetElement(models.Model):
+    class Meta:
+        unique_together=(('direction', 'ruleset', 'baserule'))
+
+    id = models.UUIDField(default=uuid.uuid4, primary_key= True, editable= False)
     direction = models.CharField(max_length=15, choices=direction_choices)
     ruleset = models.ForeignKey(RuleSet)
     baserule = models.ForeignKey(BaseRule, related_name='elements_ruleset')
