@@ -25,6 +25,7 @@ router.register(r'planner/rulesetelements',viewsets.RuleSetElementViewSet)
 router.register(r'planner/rulesets',viewsets.RuleSetViewSet)
 router.register(r'planner/baserules',viewsets.BaseRuleViewSet)
 router.register(r'planner/daterules',viewsets.DateRuleViewSet)
+router.register(r'planner/delta',viewsets.DeltaViewSet)
 
 urlpatterns = [
     url(r'', include(router.urls)),

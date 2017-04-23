@@ -1,32 +1,10 @@
 from django.db import models
 from polymorphic.models import PolymorphicModel
-from django.utils.translation import ugettext_lazy as _
 from datetime import datetime
 from dateutil import rrule as rr
 import itertools
 import uuid
-
-weekdays = (
-    ('MO', _('Monday')),
-    ('TU', _('Tuesday')),
-    ('WE', _('Wednesday')),
-    ('TH', _('Thursday')),
-    ('FR', _('Friday')),
-    ('SA', _('Saturday')),
-    ('SU', _('Sunday'))
-)
-
-freq_choices = (
-    ('YEARLY', _('Yearly')),
-    ('MONTHLY', _('Monthly')),
-    ('WEEKLY', _('Weekly')),
-    ('DAILY', _('Daily'))
-)
-
-direction_choices = (
-    ('INCLUDE',_('Include')),
-    ('EXCLUDE',_('Exclude'))
-)
+from planner.choices import freq_choices, weekdays, direction_choices
 
 class BaseRule(PolymorphicModel):
     id = models.UUIDField(default=uuid.uuid4, primary_key= True, editable= False)

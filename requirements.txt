@@ -4,5 +4,6 @@ django-modeltranslation==0.12
 django-polymorphic==1.1
 djangorestframework==3.6.2
 python-dateutil==2.6.0
+pytz==2017.2
 six==1.10.0
 Werkzeug==0.12.1
