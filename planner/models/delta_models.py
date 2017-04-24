@@ -4,30 +4,37 @@ from dateutil.relativedelta import MO, TU, WE, TH, FR, SA, SU
 import datetime
 
 class Delta(models.Model):
-    year = models.CharField(max_length=4, default=None, blank=True)
-    month = models.CharField(max_length=4, default=None, blank=True)
-    day = models.CharField(max_length=4, default=None, blank=True)
-    hour = models.CharField(max_length=4, default=None, blank=True)
-    minute = models.CharField(max_length=4, default=None, blank=True)
-    second = models.CharField(max_length=4, default=None, blank=True)
-    microsecond = models.CharField(max_length=4, default=None, blank=True)
-    years = models.CharField(max_length=4, default=None, blank=True)
-    months = models.CharField(max_length=4, default=None, blank=True)
-    days = models.CharField(max_length=4, default=None, blank=True)
-    hours = models.CharField(max_length=4, default=None, blank=True)
-    minutes = models.CharField(max_length=4, default=None, blank=True)
-    seconds = models.CharField(max_length=4, default=None, blank=True)
-    microseconds = models.CharField(max_length=4, default=None, blank=True)
+    _relative_delta_intfields = ['year', 'month', 'day', 'hour', 'minute',\
+    'second', 'microsecond','years', 'months', 'days', 'hours', 'minutes',\
+    'seconds', 'microseconds', 'leapdays', 'yearday', 'nlyearday']
+    _relative_delta_strfields = ['weekday']
+    year = models.IntegerField(default=None, null=True, blank=True)
+    month = models.IntegerField(default=None, null=True, blank=True)
+    day = models.IntegerField(default=None, null=True, blank=True)
+    hour = models.IntegerField(default=None, null=True, blank=True)
+    minute = models.IntegerField(default=None, null=True, blank=True)
+    second = models.IntegerField(default=None, null=True, blank=True)
+    microsecond = models.IntegerField(default=None, null=True, blank=True)
+    years = models.IntegerField(default=None, null=True, blank=True)
+    months = models.IntegerField(default=None, null=True, blank=True)
+    days = models.IntegerField(default=None, null=True, blank=True)
+    hours = models.IntegerField(default=None, null=True, blank=True)
+    minutes = models.IntegerField(default=None, null=True, blank=True)
+    seconds = models.IntegerField(default=None, null=True, blank=True)
+    microseconds = models.IntegerField(default=None, null=True, blank=True)
     weekday = models.CharField(max_length=6, default=None, blank=True)
-    leapdays = models.CharField(max_length=6, default=None, blank=True)
-    yearday = models.CharField(max_length=4, default=None, blank=True)
-    nlyearday = models.CharField(max_length=4, default=None, blank=True)
+    leapdays = models.IntegerField(default=None, null=True, blank=True)
+    yearday = models.IntegerField(default=None, null=True, blank=True)
+    nlyearday = models.IntegerField(default=None, null=True, blank=True)
 
     def to_custom_dict(self):
         dict = {}
-        for f in Delta._meta.get_fields():
-            f_name = f.name
-            if getattr(self, f_name) not in [None, ''] and f_name is not 'id':
+        for f_name in self._relative_delta_intfields:
+            if getattr(self, f_name) not in [None, '']:
+                f_value = getattr(self, f_name)
+                dict[f_name] = f_value
+        for f_name in self._relative_delta_strfields:
+            if getattr(self, f_name) not in [None, '']:
                 f_value = eval(getattr(self, f_name))
                 dict[f_name] = f_value
         return dict
