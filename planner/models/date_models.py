@@ -4,6 +4,7 @@ from datetime import datetime
 from dateutil import rrule as rr
 import itertools
 import uuid
+from django.utils.translation import ugettext_lazy as _
 from planner.choices import freq_choices, weekdays, direction_choices
 
 class BaseRule(PolymorphicModel):

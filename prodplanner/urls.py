@@ -20,12 +20,14 @@ from planner import viewsets
 from rest_framework import routers
 
 router = routers.DefaultRouter()
-router.register(r'planner/simplerules',viewsets.SimpleRuleViewSet)
-router.register(r'planner/rulesetelements',viewsets.RuleSetElementViewSet)
-router.register(r'planner/rulesets',viewsets.RuleSetViewSet)
-router.register(r'planner/baserules',viewsets.BaseRuleViewSet)
-router.register(r'planner/daterules',viewsets.DateRuleViewSet)
-router.register(r'planner/delta',viewsets.DeltaViewSet)
+router.register(r'planner/simplerules', viewsets.SimpleRuleViewSet)
+router.register(r'planner/rulesetelements', viewsets.RuleSetElementViewSet)
+router.register(r'planner/rulesets', viewsets.RuleSetViewSet)
+router.register(r'planner/baserules', viewsets.BaseRuleViewSet)
+router.register(r'planner/daterules', viewsets.DateRuleViewSet)
+router.register(r'planner/deltas', viewsets.DeltaViewSet)
+router.register(r'planner/schedules', viewsets.ScheduleViewSet)
+router.register(r'planner/tasks', viewsets.TaskViewSet)
 
 urlpatterns = [
     url(r'', include(router.urls)),

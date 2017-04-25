@@ -39,6 +39,13 @@ class Delta(models.Model):
                 dict[f_name] = f_value
         return dict
 
+    def __str__(self):
+        return str(self.to_custom_dict())
+
+    def to_end(self, begin):
+        end = begin + relativedelta.relativedelta(**(self.to_custom_dict()))
+        return end
+
     @property
     def calculated_delta(self):
         now = datetime.datetime.now()
