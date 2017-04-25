@@ -2,7 +2,7 @@ prodplanner
 ===========
 
 
-Django DRF project to calculate dates for reccuring actions
+Django DRF project to calculate dates for recurrent actions
 
 Based on dateutil ; it is possible to define rrules and dates and create rrulesets including or excluding rrulesets, rrules or datetimes.
 
