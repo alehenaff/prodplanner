@@ -1,7 +1,9 @@
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
-from planner.models import SimpleRule, RuleSet, RuleSetElement, DateRule
+from planner.models import SimpleRule, RuleSet, RuleSetElement, DateRule, \
+    Schedule, Task
+    
 from datetime import datetime, date
 
 class SimpleRuleTests(APITestCase):
@@ -66,13 +68,13 @@ class RuleSetElementTests(APITestCase):
           bymonthday='', byyearday='', byweekno='', byeaster='')
         derniers_mercredis_mois.save()
 
-        avril26_2017 = DateRule.objects.create(date = '2017-04-26')
-        avril26_2017.save()
+        april26_2017 = DateRule.objects.create(date = '2017-04-26')
+        april26_2017.save()
 
         ruleset1 = RuleSet.objects.create(name='ruleset1')
         RuleSetElement.objects.create(direction='INCLUDE', baserule=mercredis, ruleset = ruleset1)
         RuleSetElement.objects.create(direction='EXCLUDE', baserule=derniers_mercredis_mois, ruleset = ruleset1)
-        RuleSetElement.objects.create(direction='INCLUDE', baserule=avril26_2017, ruleset = ruleset1)
+        RuleSetElement.objects.create(direction='INCLUDE', baserule=april26_2017, ruleset = ruleset1)
         self.assertTrue(datetime(2017,3,22).date() in list(ruleset1.between(datetime(2017,3,1),datetime(2017,5,1))))
         self.assertFalse(datetime(2017,4,26).date() in list(ruleset1.between(datetime(2017,3,1),datetime(2017,5,1))))
 

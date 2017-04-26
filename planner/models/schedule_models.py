@@ -16,7 +16,8 @@ class Schedule(models.Model):
         date.day, self.hour, self.minute, self.second)
 
 class Task(models.Model):
-    start = models.DateTimeField()
+    original_start = models.DateTimeField()
+    start = models.DateTimeField(blank=True, null=True)
     end = models.DateTimeField()
     schedule = models.ForeignKey(Schedule)
 
@@ -24,5 +25,8 @@ def task_generate(schedule, start, end):
     for sched_instance in schedule.ruleset.between(start, end):
         task_start = schedule.datetime_from_date(sched_instance)
         task_end = schedule.delta.to_end(task_start)
-        task = Task.objects.get_or_create(start=task_start, end=task_end,\
+        task, created = Task.objects.get_or_create(original_start=task_start, end=task_end,\
          schedule=schedule)
+        if created:
+            task.start = task.original_start
+            task.save()
