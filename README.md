@@ -95,7 +95,7 @@ Alpha developpement
 # tested with
 
 * Python 3.5.3
-* Django 1.10.6
+* Django 1.11.1
 
 # todo
 * make it as a library or django-app
