@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from planner.models import SimpleRule, RuleSet, RuleSetElement, DateRule, \
     Schedule, Task
-    
+
 from datetime import datetime, date
 
 class SimpleRuleTests(APITestCase):
@@ -79,7 +79,8 @@ class RuleSetElementTests(APITestCase):
         self.assertFalse(datetime(2017,4,26).date() in list(ruleset1.between(datetime(2017,3,1),datetime(2017,5,1))))
 
 
-
+class DeltaTests(APITestCase):
+    pass
 
 
 

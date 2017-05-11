@@ -11,4 +11,4 @@ class TaskSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.HyperlinkedIdentityField(view_name='task-detail')
     class Meta:
         model = Task
-        fields = ['id', 'start', 'end', 'schedule']
+        fields = ['id', 'start', 'due_time', 'schedule']

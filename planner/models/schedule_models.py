@@ -16,17 +16,17 @@ class Schedule(models.Model):
         date.day, self.hour, self.minute, self.second)
 
 class Task(models.Model):
-    original_start = models.DateTimeField()
     start = models.DateTimeField(blank=True, null=True)
-    end = models.DateTimeField()
+    due_time = models.DateTimeField(blank=True, null=True)
+    original_due_time = models.DateTimeField()
     schedule = models.ForeignKey(Schedule)
 
 def task_generate(schedule, start, end):
     for sched_instance in schedule.ruleset.between(start, end):
-        task_start = schedule.datetime_from_date(sched_instance)
-        task_end = schedule.delta.to_end(task_start)
-        task, created = Task.objects.get_or_create(original_start=task_start, end=task_end,\
+        task_due_time = schedule.datetime_from_date(sched_instance)
+        task_start = schedule.delta.to_start(task_due_time)
+        task, created = Task.objects.get_or_create(original_due_time=task_due_time, start=task_start,\
          schedule=schedule)
         if created:
-            task.start = task.original_start
+            task.due_time = task.original_due_time
             task.save()

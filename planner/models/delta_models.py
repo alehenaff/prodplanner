@@ -42,9 +42,9 @@ class Delta(models.Model):
     def __str__(self):
         return str(self.to_custom_dict())
 
-    def to_end(self, begin):
-        end = begin + relativedelta.relativedelta(**(self.to_custom_dict()))
-        return end
+    def to_start(self, end):
+        begin = end + relativedelta.relativedelta(**(self.to_custom_dict()))
+        return begin
 
     @property
     def calculated_delta(self):
