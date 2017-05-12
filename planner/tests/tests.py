@@ -3,10 +3,18 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from planner.models import SimpleRule, RuleSet, RuleSetElement, DateRule, \
     Schedule, Task
-
 from datetime import datetime, date
+import testing.postgresql as pg
 
-class SimpleRuleTests(APITestCase):
+class PgTestCase(APITestCase):
+    def setUp(self):
+        self.postgresql = pg.Postgresql()
+
+    def tearDown(self):
+        self.postgresql.stop()
+
+
+class SimpleRuleTests(PgTestCase):
     def test_create_simplerule(self):
         url = '/planner/simplerules/'
         data = {"name_fr": "Lundi de Pâques", "name_en": "Easter Monday","freq": "YEARLY", "byeaster": "1"}
@@ -16,7 +24,7 @@ class SimpleRuleTests(APITestCase):
         self.assertEqual(SimpleRule.objects.get().name_fr,'Lundi de Pâques')
 
 
-class RuleSetTests(APITestCase):
+class RuleSetTests(PgTestCase):
     def test_create_ruleset(self):
         url = '/planner/rulesets/'
         data = {"name_fr" : "Jours fériés France", "name_en" : "Days off France"}
@@ -25,7 +33,7 @@ class RuleSetTests(APITestCase):
         self.assertEqual(RuleSet.objects.count(),1)
         self.assertEqual(RuleSet.objects.get().name,'Jours fériés France')
 
-class RuleSetElementTests(APITestCase):
+class RuleSetElementTests(PgTestCase):
     def test_create_rulesetelement(self):
         url = '/planner/simplerules/'
         data = {"name_fr": "Lundi de Pâques", "name_en": "Easter Monday","freq": "YEARLY", "byeaster": "1"}
