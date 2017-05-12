@@ -4,11 +4,16 @@ from rest_framework.test import APITestCase
 from planner.models import SimpleRule, RuleSet, RuleSetElement, DateRule, \
     Schedule, Task
 from datetime import datetime, date
-import testing.postgresql as pg
+import testing.postgresql
+
+Postgresql = testing.postgresql.PostgresqlFactory(cache_initialized_db=True)
+
+def tearDownModule():
+    Postgresql.clear_cache()
 
 class PgTestCase(APITestCase):
     def setUp(self):
-        self.postgresql = pg.Postgresql()
+        self.postgresql = Postgresql()
 
     def tearDown(self):
         self.postgresql.stop()
