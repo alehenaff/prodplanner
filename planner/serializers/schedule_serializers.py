@@ -3,7 +3,11 @@ from planner.models import Schedule, Task
 import six
 import pytz
 
-class TimezoneField(serializers.Field):
+
+# from https://github.com/mfogel/django-timezone-field/issues/29
+# adapted for a ChoiceField
+
+class TimezoneField(serializers.ChoiceField):
     def to_representation(self, obj):
         return six.text_type(obj)
 
@@ -15,7 +19,7 @@ class TimezoneField(serializers.Field):
 
 class ScheduleSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.HyperlinkedIdentityField(view_name='schedule-detail')
-    timezone = TimezoneField()
+    timezone = TimezoneField(choices=pytz.all_timezones, default='UTC', initial='UTC')
     class Meta:
         model = Schedule
         fields = ['id', 'ruleset', 'delta', 'hour', 'minute', 'second',

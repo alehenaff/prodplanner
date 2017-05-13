@@ -2,6 +2,7 @@ from django.db import models
 from planner.models import RuleSet, Delta
 import datetime
 import uuid
+import pytz
 from timezone_field import TimeZoneField
 
 class Schedule(models.Model):
@@ -11,7 +12,7 @@ class Schedule(models.Model):
     hour = models.IntegerField(default=0)
     minute = models.IntegerField(default=0)
     second = models.IntegerField(default=0)
-    timezone = TimeZoneField()
+    timezone = TimeZoneField(default=pytz.timezone('UTC'))
 
     def datetime_from_date(self,date):
         return datetime.datetime(date.year, date.month, \
