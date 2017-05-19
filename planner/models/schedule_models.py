@@ -15,8 +15,8 @@ class Schedule(models.Model):
     timezone = TimeZoneField(default=pytz.timezone('UTC'))
 
     def datetime_from_date(self,date):
-        return datetime.datetime(date.year, date.month, \
-        date.day, self.hour, self.minute, self.second)
+        return self.timezone.localize(datetime.datetime(date.year, date.month, \
+        date.day, self.hour, self.minute, self.second))
 
 class Task(models.Model):
     start = models.DateTimeField(blank=True, null=True)
