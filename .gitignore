@@ -55,3 +55,7 @@ docs/_build/
 
 # PyBuilder
 target/
+planner/management/
+db.sqlite3
+**migrations**
+!**/migrations/__init__.py
