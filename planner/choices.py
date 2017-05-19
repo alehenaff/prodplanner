@@ -10,11 +10,17 @@ weekdays = (
     ('SU', _('Sunday'))
 )
 
-freq_choices = (
+freq_supradaily_choices = (
     ('YEARLY', _('Yearly')),
     ('MONTHLY', _('Monthly')),
     ('WEEKLY', _('Weekly')),
     ('DAILY', _('Daily'))
+)
+
+freq_infradaily_choices = (
+    ('HOURLY', _('Hourly')),
+    ('MINUTELY', _('Minutely')),
+    ('SECONDLY', _('Secondly'))
 )
 
 direction_choices = (
