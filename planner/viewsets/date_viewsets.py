@@ -1,8 +1,8 @@
 from rest_framework import viewsets
-from planner.serializers import SimpleRuleSerializer, \
+from planner.serializers import DayTemplateRuleSerializer, \
     RuleSetElementSerializer, RuleSetSerializer, BaseRuleSerializer, \
     DateRuleSerializer
-from planner.models import SimpleRule,  \
+from planner.models import DayTemplateRule,  \
     RuleSetElement, RuleSet, BaseRule, DateRule
 import re
 from rest_framework.response import Response
@@ -13,13 +13,13 @@ class BaseRuleViewSet(viewsets.ModelViewSet):
     queryset = BaseRule.objects.all()
     serializer_class = BaseRuleSerializer
 
-class SimpleRuleViewSet(viewsets.ModelViewSet):
-     queryset = SimpleRule.objects.all()
-     serializer_class = SimpleRuleSerializer
+class DayTemplateRuleViewSet(viewsets.ModelViewSet):
+     queryset = DayTemplateRule.objects.all()
+     serializer_class = DayTemplateRuleSerializer
 
      @detail_route(methods=['get'])
      def next10(self, request, pk=None):
-        rule = self.get_object()
+        ruleset = self.get_object()
         return Response(ruleset.next10())
 
 class RuleSetElementViewSet(viewsets.ModelViewSet):

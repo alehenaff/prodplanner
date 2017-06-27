@@ -17,7 +17,7 @@ class Schedule(models.Model):
     hour = models.IntegerField(default=0)
     minute = models.IntegerField(default=0)
     second = models.IntegerField(default=0)
-    timezone = TimeZoneField(default=pytz.timezone('UTC'))
+    timezone = TimeZoneField(default='UTC')
 
     def datetime_from_date(self, date):
         """

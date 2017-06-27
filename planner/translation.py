@@ -1,7 +1,7 @@
 from modeltranslation.translator import register, TranslationOptions
-from .models import SimpleRule, RuleSet
+from .models import DayTemplateRule, RuleSet
 
-@register(SimpleRule)
+@register(DayTemplateRule)
 class SimpleRuleTranslation(TranslationOptions):
     fields = ('name',)
 

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from planner.models import SimpleRule, RuleSetElement, \
+from planner.models import DayTemplateRule, RuleSetElement, \
    RuleSet, BaseRule, DateRule
 import re
 
@@ -16,13 +16,13 @@ def pattern_validate(nbmax):
             integer or sequence of integers (comma separated)")
     return validate
 
-class ShortSimpleRuleSerializer(serializers.HyperlinkedModelSerializer):
+class ShortDayTemplateRuleSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = SimpleRule
+        model = DayTemplateRule
         fields = ('url', 'content', 'name_fr', 'name_en',)
 
 
-class SimpleRuleSerializer(serializers.HyperlinkedModelSerializer):
+class DayTemplateRuleSerializer(serializers.HyperlinkedModelSerializer):
 
     wkst = serializers.CharField(required=False, default="MO")
     byweekday = serializers.CharField(required=False, allow_blank=True, default='')
@@ -72,7 +72,7 @@ class SimpleRuleSerializer(serializers.HyperlinkedModelSerializer):
         return value
 
     class Meta:
-        model = SimpleRule
+        model = DayTemplateRule
         fields = (
         'url', 'content', 'name_fr', 'name_en', 'freq', 'wkst', 'byweekday', 'bymonth',
         'bysetpos', 'bymonthday', 'byyearday', 'byweekno', 'byeaster')
@@ -84,8 +84,8 @@ class BaseRuleSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('id',)
 
     def to_representation(self, obj):
-        if isinstance(obj, SimpleRule):
-            return SimpleRuleSerializer(obj, context=self.context).to_representation(obj)
+        if isinstance(obj, DayTemplateRule):
+            return DayTemplateRuleSerializer(obj, context=self.context).to_representation(obj)
         elif isinstance(obj, DateRule):
             return DateRuleSerializer(obj, context=self.context).to_representation(obj)
         return super(BaseRuleSerializer, self).to_representation(obj)
@@ -97,8 +97,8 @@ class ShortBaseRuleSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('id',)
 
     def to_representation(self, obj):
-        if isinstance(obj, SimpleRule):
-            return ShortSimpleRuleSerializer(obj, context=self.context).to_representation(obj)
+        if isinstance(obj, DayTemplateRule):
+            return ShortDayTemplateRuleSerializer(obj, context=self.context).to_representation(obj)
         elif isinstance(obj, DateRule):
             return DateRuleSerializer(obj, context=self.context).to_representation(obj)
         elif isinstance(obj, RuleSet):

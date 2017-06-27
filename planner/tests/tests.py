@@ -1,7 +1,7 @@
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
-from planner.models import SimpleRule, RuleSet, RuleSetElement, DateRule, \
+from planner.models import DayTemplateRule, RuleSet, RuleSetElement, DateRule, \
     Schedule, Task
 from datetime import datetime, date
 import testing.postgresql
@@ -20,13 +20,13 @@ class PgTestCase(APITestCase):
 
 
 class SimpleRuleTests(PgTestCase):
-    def test_create_simplerule(self):
-        url = '/planner/simplerules/'
+    def test_create_daytemplaterule(self):
+        url = '/planner/daytemplaterules/'
         data = {"name_fr": "Lundi de Pâques", "name_en": "Easter Monday","freq": "YEARLY", "byeaster": "1"}
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(SimpleRule.objects.count(),1)
-        self.assertEqual(SimpleRule.objects.get().name_fr,'Lundi de Pâques')
+        self.assertEqual(DayTemplateRule.objects.count(),1)
+        self.assertEqual(DayTemplateRule.objects.get().name_fr,'Lundi de Pâques')
 
 
 class RuleSetTests(PgTestCase):
@@ -40,7 +40,7 @@ class RuleSetTests(PgTestCase):
 
 class RuleSetElementTests(PgTestCase):
     def test_create_rulesetelement(self):
-        url = '/planner/simplerules/'
+        url = '/planner/daytemplaterules/'
         data = {"name_fr": "Lundi de Pâques", "name_en": "Easter Monday","freq": "YEARLY", "byeaster": "1"}
         response = self.client.post(url, data, format='json')
 
@@ -50,7 +50,7 @@ class RuleSetElementTests(PgTestCase):
 
         url = '/planner/rulesetelements/'
         data = {"direction":"INCLUDE", "ruleset" : RuleSet.objects.get().pk, \
-        "baserule" : SimpleRule.objects.get().pk }
+        "baserule" : DayTemplateRule.objects.get().pk }
 
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -71,12 +71,12 @@ class RuleSetElementTests(PgTestCase):
         There is so no need to order inclusions / exclusions
         '''
 
-        mercredis = SimpleRule.objects.create(name_fr='Mercredis', name_en='Wednesdays',\
+        mercredis = DayTemplateRule.objects.create(name_fr='Mercredis', name_en='Wednesdays',\
          freq='WEEKLY', byweekday='WE', bymonth='', bysetpos='', bymonthday='', byyearday='',\
          byweekno='', byeaster='')
         mercredis.save()
 
-        derniers_mercredis_mois = SimpleRule.objects.create(name_fr="Derniers mercredis du mois",\
+        derniers_mercredis_mois = DayTemplateRule.objects.create(name_fr="Derniers mercredis du mois",\
           name_en="Last wednesdays of month", freq="MONTHLY", byweekday="WE", bymonth='',bysetpos="-1",\
           bymonthday='', byyearday='', byweekno='', byeaster='')
         derniers_mercredis_mois.save()

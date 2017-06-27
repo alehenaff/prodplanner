@@ -10,8 +10,9 @@ from planner.choices import freq_supradaily_choices, weekdays, direction_choices
 
 class BaseRule(PolymorphicModel):
     """
-    Virtual Base class for date rules
+    Base class for date rules
     """
+
     id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
 
     def to_dateutil(self, start):
@@ -45,7 +46,7 @@ class DateRule(BaseRule):
         return _("Date") + " : " + str(self.date)
 
 
-class SimpleRule(BaseRule):
+class DayTemplateRule(BaseRule):
     """
     dateutil RRule, heriting from BaseRule to be able to add it to RuleSet
     """
@@ -94,14 +95,14 @@ class SimpleRule(BaseRule):
             # 10 first items
             return map(lambda x: x.date(), itertools.islice(simpr, 10))
         except ValueError as err:
-            return _("Unable to evaluate {0:s} ; Error : {1:s} ").format(self.content, str(err))
+            return _("Unable to evaluate {0:s} ; Error : {1:s} ").format(self.content, err.__str__)
 
     def to_dateutil(self, start):
         try:
             simpr = rr.rrulestr(self.content, dtstart=start)
             return simpr
         except ValueError as err:
-            return _("Unable to evaluate {0:s} ; Error : {1:s} ").format(self.content, str(err))
+            return _("Unable to evaluate {0:s} ; Error : {1:s} ").format(self.content, err.__str__)
 
     def between(self, start, end):
         """
@@ -110,11 +111,74 @@ class SimpleRule(BaseRule):
         try:
             return map(lambda x: x.date(), self.to_dateutil(start).between(start, end, inc=True))
         except ValueError as err:
-            return _("Unable to evaluate {0:s} ; Error : {1:s} ").format(self.content, str(err))
+            return _("Unable to evaluate {0:s} ; Error : {1:s} ").format(self.content, err.__str__)
 
     def __str__(self):
         return _('Base rule') + " : " + self.name
 
+
+class CompleteRule(BaseRule):
+
+    daytemplate = models.ForeignKey(DayTemplateRule)
+    byhour = models.CharField(max_length=50, default=None, blank=True)
+    byminute = models.CharField(max_length=50, default=None, blank=True)
+    bysecond = models.CharField(max_length=50, default=None, blank=True)
+
+    @property
+    def content(self):
+        """
+        return the ruleset in a string format that can be reinterpreted by rrulestr()
+        """
+        def elem(x, y):
+            """
+            returns an empty string if y is not set
+            """
+            return ";{0:s}={1:s}".format(x, y) if (y != "") else ""
+
+        rstr = 'FREQ={freq};WKST={wkst}{bwd}{bm}{bsp}{bmd}{byd}{bwn}{bho}{bmi}{bse}{be}'.format(
+            freq=self.daytemplate.freq, wkst=self.daytemplate.wkst,
+            bwd=elem('BYWEEKDAY', self.daytemplate.byweekday),
+            bm=elem('BYMONTH', self.daytemplate.bymonth),
+            bsp=elem('BYSETPOS', self.daytemplate.bysetpos),
+            bmd=elem('BYMONTHDAY', self.daytemplate.bymonthday),
+            byd=elem('BYYEARDAY', self.daytemplate.byyearday),
+            bwn=elem('BYWEEKNO', self.daytemplate.byweekno),
+            bho=elem('BYHOUR', self.byhour),
+            bmi=elem('BYMINUTE', self.byminute),
+            bse=elem('BYSECOND', self.bysecond),
+            be=elem('BYEASTER', self.daytemplate.byeaster)
+        )
+        return rstr
+
+    def next10(self):
+        """
+        returns next 10 occurrences from now
+        """
+        try:
+            simpr = self.to_dateutil(datetime.now())
+            # 10 first items
+            return map(lambda x: x.date(), itertools.islice(simpr, 10))
+        except ValueError as err:
+            return _("Unable to evaluate {0:s} ; Error : {1:s} ").format(self.content, err.__str__)
+
+    def to_dateutil(self, start):
+        try:
+            simpr = rr.rrulestr(self.content, dtstart=start)
+            return simpr
+        except ValueError as err:
+            return _("Unable to evaluate {0:s} ; Error : {1:s} ").format(self.content, err.__str__)
+
+    def between(self, start, end):
+        """
+        returns occurrences between start and end
+        """
+        try:
+            return map(lambda x: x.date(), self.to_dateutil(start).between(start, end, inc=True))
+        except ValueError as err:
+            return _("Unable to evaluate {0:s} ; Error : {1:s} ").format(self.content, err.__str__)
+
+    def __str__(self):
+        return _('Base rule') + " : " + self.name
 
 class RuleSet(BaseRule):
     """
@@ -136,7 +200,7 @@ class RuleSet(BaseRule):
                     rlst.rdate(elem.baserule.to_dateutil(start))
                 else:
                     rlst.exdate(elem.baserule.to_dateutil(start))
-            elif isinstance(elem.baserule, SimpleRule):
+            elif isinstance(elem.baserule, DayTemplateRule):
                 if elem.direction == 'INCLUDE':
                     rlst.rrule(elem.baserule.to_dateutil(start))
                 else:
