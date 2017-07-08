@@ -4,7 +4,6 @@ from planner.serializers import DayTemplateRuleSerializer, \
     DateRuleSerializer
 from planner.models import DayTemplateRule,  \
     RuleSetElement, RuleSet, BaseRule, DateRule
-import re
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
 from dateutil.parser import parse
@@ -14,11 +13,11 @@ class BaseRuleViewSet(viewsets.ModelViewSet):
     serializer_class = BaseRuleSerializer
 
 class DayTemplateRuleViewSet(viewsets.ModelViewSet):
-     queryset = DayTemplateRule.objects.all()
-     serializer_class = DayTemplateRuleSerializer
+    queryset = DayTemplateRule.objects.all()
+    serializer_class = DayTemplateRuleSerializer
 
-     @detail_route(methods=['get'])
-     def next10(self, request, pk=None):
+    @detail_route(methods=['get'])
+    def next10(self, request, pk=None):
         ruleset = self.get_object()
         return Response(ruleset.next10())
 

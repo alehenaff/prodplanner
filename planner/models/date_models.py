@@ -54,13 +54,13 @@ class DayTemplateRule(BaseRule):
     wkst = models.CharField(max_length=2, choices=weekdays, default='MO')
     freq = models.CharField(max_length=10, default='YEARLY',
                             choices=freq_supradaily_choices)
-    byweekday = models.CharField(max_length=25, default=None, blank=True)
-    bymonth = models.CharField(max_length=50, default=None, blank=True)
-    bysetpos = models.CharField(max_length=50, default=None, blank=True)
-    bymonthday = models.CharField(max_length=50, default=None, blank=True)
-    byyearday = models.CharField(max_length=200, default=None, blank=True)
-    byweekno = models.CharField(max_length=200, default=None, blank=True)
-    byeaster = models.CharField(max_length=30, default=None, blank=True)
+    byweekday = models.CharField(max_length=25, default="", blank=True)
+    bymonth = models.CharField(max_length=50, default="", blank=True)
+    bysetpos = models.CharField(max_length=50, default="", blank=True)
+    bymonthday = models.CharField(max_length=50, default="", blank=True)
+    byyearday = models.CharField(max_length=200, default="", blank=True)
+    byweekno = models.CharField(max_length=200, default="", blank=True)
+    byeaster = models.CharField(max_length=30, default="", blank=True)
 
     @property
     def content(self):
@@ -120,9 +120,9 @@ class DayTemplateRule(BaseRule):
 class CompleteRule(BaseRule):
 
     daytemplate = models.ForeignKey(DayTemplateRule)
-    byhour = models.CharField(max_length=50, default=None, blank=True)
-    byminute = models.CharField(max_length=50, default=None, blank=True)
-    bysecond = models.CharField(max_length=50, default=None, blank=True)
+    byhour = models.CharField(max_length=50, default="", blank=True)
+    byminute = models.CharField(max_length=50, default="", blank=True)
+    bysecond = models.CharField(max_length=50, default="", blank=True)
 
     @property
     def content(self):
