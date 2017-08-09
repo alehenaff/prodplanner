@@ -4,16 +4,17 @@ import uuid
 from dateutil import rrule as rr
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
-from polymorphic.models import PolymorphicModel
+from model_utils.managers import InheritanceManager
 from planner.choices import freq_supradaily_choices, weekdays, direction_choices
 
 
-class BaseRule(PolymorphicModel):
+class BaseRule(models.Model):
     """
     Base class for date rules
     """
 
     id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    objects = InheritanceManager()
 
     def to_dateutil(self, start):
         """
@@ -25,6 +26,10 @@ class BaseRule(PolymorphicModel):
         ...
         """
         pass
+    
+    def __str__(self):
+        real_obj = BaseRule.objects.get_subclass(id=self.id)
+        return real_obj.__str__()
 
 
 class DateRule(BaseRule):
@@ -44,6 +49,7 @@ class DateRule(BaseRule):
 
     def __str__(self):
         return _("Date") + " : " + str(self.date)
+
 
 
 class DayTemplateRule(BaseRule):
@@ -115,6 +121,7 @@ class DayTemplateRule(BaseRule):
 
     def __str__(self):
         return _('Base rule') + " : " + self.name
+
 
 
 class CompleteRule(BaseRule):
@@ -195,21 +202,22 @@ class RuleSet(BaseRule):
     def to_dateutil(self, start):
         rlst = rr.rruleset()
         for elem in self.rulesetelement_set.all():
-            if isinstance(elem.baserule, DateRule):
+            child_rule = BaseRule.objects.get_subclass(id=elem.baserule.id)
+            if isinstance(child_rule, DateRule):
                 if elem.direction == 'INCLUDE':
-                    rlst.rdate(elem.baserule.to_dateutil(start))
+                    rlst.rdate(child_rule.to_dateutil(start))
                 else:
-                    rlst.exdate(elem.baserule.to_dateutil(start))
-            elif isinstance(elem.baserule, DayTemplateRule):
+                    rlst.exdate(child_rule.to_dateutil(start))
+            elif isinstance(child_rule, DayTemplateRule):
                 if elem.direction == 'INCLUDE':
-                    rlst.rrule(elem.baserule.to_dateutil(start))
+                    rlst.rrule(child_rule.to_dateutil(start))
                 else:
-                    rlst.exrule(elem.baserule.to_dateutil(start))
-            elif isinstance(elem.baserule, RuleSet):
+                    rlst.exrule(child_rule.to_dateutil(start))
+            elif isinstance(child_rule, RuleSet):
                 if elem.direction == 'INCLUDE':
-                    rlst.rrule(elem.baserule.to_dateutil(start))
+                    rlst.rrule(child_rule.to_dateutil(start))
                 else:
-                    rlst.exrule(elem.baserule.to_dateutil(start))
+                    rlst.exrule(child_rule.to_dateutil(start))
             else:
                 pass
         return rlst

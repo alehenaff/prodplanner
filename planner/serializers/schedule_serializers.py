@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.validators import ValidationError
 from planner.models import Schedule, Task
 import six
 import pytz
@@ -27,6 +28,7 @@ class ScheduleSerializer(serializers.HyperlinkedModelSerializer):
 
 class TaskSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.HyperlinkedIdentityField(view_name='task-detail')
+    original_due_time = serializers.ReadOnlyField()
     class Meta:
         model = Task
-        fields = ['id', 'start', 'due_time', 'schedule']
+        fields = ['id', 'start', 'due_time', 'original_due_time', 'schedule']

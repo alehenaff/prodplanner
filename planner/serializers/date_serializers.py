@@ -84,11 +84,12 @@ class BaseRuleSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('id',)
 
     def to_representation(self, obj):
-        if isinstance(obj, DayTemplateRule):
-            return DayTemplateRuleSerializer(obj, context=self.context).to_representation(obj)
-        elif isinstance(obj, DateRule):
-            return DateRuleSerializer(obj, context=self.context).to_representation(obj)
-        return super(BaseRuleSerializer, self).to_representation(obj)
+        child_obj = BaseRule.objects.get_subclass(id=obj.id)
+        if isinstance(child_obj, DayTemplateRule):
+            return DayTemplateRuleSerializer(child_obj, context=self.context).to_representation(child_obj)
+        elif isinstance(child_obj, DateRule):
+            return DateRuleSerializer(child_obj, context=self.context).to_representation(child_obj)
+        return super(BaseRuleSerializer, self).to_representation(child_obj)
 
 
 class ShortBaseRuleSerializer(serializers.HyperlinkedModelSerializer):
@@ -97,13 +98,14 @@ class ShortBaseRuleSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('id',)
 
     def to_representation(self, obj):
-        if isinstance(obj, DayTemplateRule):
-            return ShortDayTemplateRuleSerializer(obj, context=self.context).to_representation(obj)
-        elif isinstance(obj, DateRule):
-            return DateRuleSerializer(obj, context=self.context).to_representation(obj)
-        elif isinstance(obj, RuleSet):
-            return RuleSetSerializer(obj, context=self.context).to_representation(obj)
-        return super(BaseRuleSerializer, self).to_representation(obj)
+        child_obj = BaseRule.objects.get_subclass(id=obj.id)
+        if isinstance(child_obj, DayTemplateRule):
+            return ShortDayTemplateRuleSerializer(child_obj, context=self.context).to_representation(child_obj)
+        elif isinstance(child_obj, DateRule):
+            return DateRuleSerializer(child_obj, context=self.context).to_representation(child_obj)
+        elif isinstance(child_obj, RuleSet):
+            return RuleSetSerializer(child_obj, context=self.context).to_representation(child_obj)
+        return super(BaseRuleSerializer, self).to_representation(child_obj)
 
 class RuleSetElementSerializer(serializers.ModelSerializer):
     class Meta:

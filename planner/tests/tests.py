@@ -20,8 +20,8 @@ class PgTestCase(APITestCase):
 
 
 class SimpleRuleTests(PgTestCase):
-    def test_create_daytemplaterule(self):
-        url = '/planner/daytemplaterules/'
+    def test_create_simplerule(self):
+        url = '/planner/simplerules/'
         data = {"name_fr": "Lundi de Pâques", "name_en": "Easter Monday","freq": "YEARLY", "byeaster": "1"}
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -40,7 +40,7 @@ class RuleSetTests(PgTestCase):
 
 class RuleSetElementTests(PgTestCase):
     def test_create_rulesetelement(self):
-        url = '/planner/daytemplaterules/'
+        url = '/planner/simplerules/'
         data = {"name_fr": "Lundi de Pâques", "name_en": "Easter Monday","freq": "YEARLY", "byeaster": "1"}
         response = self.client.post(url, data, format='json')
 

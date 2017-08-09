@@ -4,6 +4,8 @@ import pytz
 from django.db import models
 from planner.models import RuleSet, Delta
 from timezone_field import TimeZoneField
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 
 class Schedule(models.Model):
     """
@@ -37,7 +39,7 @@ class Task(models.Model):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
     start = models.DateTimeField(blank=True, null=True)
     due_time = models.DateTimeField(blank=True, null=True)
-    original_due_time = models.DateTimeField()
+    original_due_time = models.DateTimeField(blank=True, null=True)
     schedule = models.ForeignKey(Schedule)
 
 def task_generate(schedule, start, end):
@@ -52,3 +54,8 @@ def task_generate(schedule, start, end):
         if created:
             task.due_time = task.original_due_time
             task.save()
+
+@receiver(pre_save, sender=Task)
+def init_task(sender, instance, *args, **kwargs):
+    if instance.original_due_time is None:
+        instance.original_due_time = instance.due_time
