@@ -17,7 +17,7 @@ To perform it :
 
 it is then possible to query a rruleset to get occurences on a time interval :
 
-http://localhost:8000/planner/rulesets/a66d4242-8e2e-43bd-ba49-3970dc51ca28/between/?start=2017-01-01T00:00:00&end=2018-01-01T00:00:00
+http://localhost:8000/planner/rulesets/886ac04c-d57f-4f1b-ab3d-f8415f5e0521/between/?start=2017-01-01T00:00:00&end=2018-01-01T00:00:00
 
 ```
 HTTP 200 OK
@@ -43,7 +43,7 @@ Vary: Accept
 ```
 It is also possible to get next 10 occurences for a ruleset :
 
-http://localhost:8000/planner/rulesets/a66d4242-8e2e-43bd-ba49-3970dc51ca28/next10/
+http://localhost:8000/planner/rulesets/886ac04c-d57f-4f1b-ab3d-f8415f5e0521/next10/
 ```
 [
     "2017-05-01",
